@@ -1,0 +1,10 @@
+{
+  "name": "salary-exchange-api",
+  "version": "0.0.1",
+  "description": "API for client with server-side caching to check the value of your salary in another currency",
+  "main": "server.js",
+  "repository": "https://github.com/GitHug/salary-exchange-api.git",
+  "author": "Fredrik Mäkilä <fredrik.makila@gmail.com>",
+  "license": "MIT",
+  "private": false
+}
