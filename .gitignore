@@ -1,3 +1,4 @@
 .DS_Store
 firestore_keyfile.json
 node_modules/
+data/*
