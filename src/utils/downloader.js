@@ -81,6 +81,10 @@ process.argv.forEach((argv) => {
     case 'historical':
       fetchRates(fetchHistoricalRatesHref);
       break;
+    case 'all':
+      fetchRates(fetchCurrentRatesHref);
+      fetchRates(fetchHistoricalRatesHref);
+      break;
     default:
   }
 });
