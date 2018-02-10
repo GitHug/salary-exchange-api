@@ -8,7 +8,7 @@ const { Query, fetchRates } = require('../src/db');
 chai.use(chaiAsPromised);
 const { expect } = chai;
 
-describe('fetchRates()', () => {
+describe('db', () => {
   beforeEach(() => {
     const mockData = fs.readFileSync(path.join(__dirname, '/test-exchangerates.csv'), 'utf8');
 

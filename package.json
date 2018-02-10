@@ -28,7 +28,7 @@
     "fetchCurrentRates": "node src/utils/downloader.js daily",
     "fetchHistoricalRates": "node src/utils/downloader.js historical",
     "fetchAllRates": "node src/utils/downloader.js all",
-    "test": "nyc --reporter=text --all mocha",
+    "test": "nyc --reporter=text --all mocha --exit",
     "eslint": "eslint src/"
   },
   "devDependencies": {
