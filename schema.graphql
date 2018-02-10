@@ -1,0 +1,23 @@
+type Query {
+  burgers(count: Int = 1): [Burger]
+  salads(count: Int = 1): [Salad]
+  exchangeRates(currency: String = "EUR"): [ExchangeRate]
+}
+type Burger {
+  buns: Int!
+  shrimp: Float!
+  egg: Float!
+  lettuce: Boolean!
+  mayo: Boolean!
+}
+type Salad {
+  avocado: Float!
+  mango: Float!
+  tomato: Float!
+  arugula: Boolean!
+  onion: Boolean!
+}
+type ExchangeRate {
+  exchangeRate: Float!
+  currency: String!
+}

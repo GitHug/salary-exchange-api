@@ -2,9 +2,37 @@
   "name": "salary-exchange-api",
   "version": "0.0.1",
   "description": "API for client with server-side caching to check the value of your salary in another currency",
-  "main": "server.js",
+  "main": "src/server.js",
   "repository": "https://github.com/GitHug/salary-exchange-api.git",
   "author": "Fredrik Mäkilä <fredrik.makila@gmail.com>",
   "license": "MIT",
-  "private": false
+  "private": false,
+  "dependencies": {
+    "@google-cloud/firestore": "^0.11.2",
+    "apollo-server-express": "^1.3.2",
+    "cheerio": "^1.0.0-rc.2",
+    "csv-parse": "^2.0.2",
+    "express": "^4.16.2",
+    "fstream": "^1.0.11",
+    "graphql": "0.11.3",
+    "graphql-tool": "^1.0.0",
+    "graphql-tools": "^2.20.1",
+    "prop-types": "^15.6.0",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "request": "^2.83.0",
+    "unzip": "^0.1.11"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "upload": "node src/utils/uploader.js",
+    "fetchCurrentRates": "node src/utils/downloader.js daily",
+    "fetchHistoricalRates": "node src/utils/downloader.js historical", 
+    "eslint": "eslint src/"
+  },
+  "devDependencies": {
+    "eslint": "^4.17.0",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.8.0"
+  }
 }
