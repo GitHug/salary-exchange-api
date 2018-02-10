@@ -10,6 +10,7 @@ class Query {
 }
 
 const calculateRate = (currency, referenceCurrency, totalAmount) =>
+  currency && referenceCurrency &&
   (totalAmount || 1) * (referenceCurrency / currency);
 
 const fetchRates = query => new Promise((resolve, reject) => {
@@ -25,6 +26,7 @@ const fetchRates = query => new Promise((resolve, reject) => {
             exchangeRate: calculateRate(rate[query.currency], rate[query.referenceCurrency]),
             salaryExchangeRate: query.salary &&
               calculateRate(rate[query.currency], rate[query.referenceCurrency], query.salary),
+            salary: query.salary,
           }
         ))))
     .catch(err => reject(err));

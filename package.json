@@ -28,11 +28,17 @@
     "fetchCurrentRates": "node src/utils/downloader.js daily",
     "fetchHistoricalRates": "node src/utils/downloader.js historical",
     "fetchAllRates": "node src/utils/downloader.js all",
+    "test": "nyc --reporter=text --all mocha",
     "eslint": "eslint src/"
   },
   "devDependencies": {
+    "chai": "^4.1.2",
+    "chai-as-promised": "^7.1.1",
     "eslint": "^4.17.0",
     "eslint-config-airbnb-base": "^12.1.0",
-    "eslint-plugin-import": "^2.8.0"
+    "eslint-plugin-import": "^2.8.0",
+    "mocha": "^5.0.0",
+    "mock-fs": "^4.4.2",
+    "nyc": "^11.4.1"
   }
 }

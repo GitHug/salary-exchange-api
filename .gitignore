@@ -2,3 +2,4 @@
 firestore_keyfile.json
 node_modules/
 data/*
+.nyc_output/

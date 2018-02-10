@@ -22,6 +22,7 @@ const csvParser = filePath => new Promise((resolve, reject) => {
   const data = [];
 
   const input = createReadStream(filePath);
+  input.on('error', () => reject(new Error('file not found')));
 
   const parser = parse(options);
   parser.on('finish', () => {
