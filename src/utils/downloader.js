@@ -52,10 +52,16 @@ const unpackage = stream => new Promise((resolve, reject) => {
   writer.on('close', () => {
     resolve(path);
   });
+  writer.on('error', (err) => {
+    reject(err.message);
+  });
 
   const parser = unzip.Parse();
   parser.on('entry', (file) => {
     path += file.path;
+  });
+  parser.on('error', (err) => {
+    reject(err.message);
   });
 
   try {
@@ -67,24 +73,35 @@ const unpackage = stream => new Promise((resolve, reject) => {
   }
 });
 
-const fetchRates = (hrefFunc) => {
+const fetchECBRates = hrefFunc =>
   hrefFunc()
     .then(url => download(url))
     .then(stream => unpackage(stream));
+
+const cli = (args) => {
+  (args || process.argv).forEach((argv) => {
+    switch (argv) {
+      case 'daily':
+        fetchECBRates(fetchCurrentRatesHref);
+        break;
+      case 'historical':
+        fetchECBRates(fetchHistoricalRatesHref);
+        break;
+      case 'all':
+        fetchECBRates(fetchCurrentRatesHref);
+        fetchECBRates(fetchHistoricalRatesHref);
+        break;
+      default:
+    }
+  });
 };
 
-process.argv.forEach((argv) => {
-  switch (argv) {
-    case 'daily':
-      fetchRates(fetchCurrentRatesHref);
-      break;
-    case 'historical':
-      fetchRates(fetchHistoricalRatesHref);
-      break;
-    case 'all':
-      fetchRates(fetchCurrentRatesHref);
-      fetchRates(fetchHistoricalRatesHref);
-      break;
-    default:
-  }
-});
+const downloader = {
+  fetchCurrentRates: () => fetchECBRates(fetchCurrentRatesHref),
+  fetchHistoricalRates: () => fetchECBRates(fetchHistoricalRatesHref),
+};
+
+module.exports = {
+  downloader,
+  cli,
+};
