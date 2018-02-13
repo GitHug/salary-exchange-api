@@ -8,8 +8,8 @@ addons:
   code_climate:
       repo_token: 
         secure: "VJLdhQSD0Nqou5UxJeGRaYWHdM3cUld6tDfnnQ+KdCqzUX4ZEtipi1bF+t/Hfih4epm5YRo78zenr9dUTIITyMqGe/d1Bq3FDNuZPqEE6s7GhjfWktFj5nln+cA4YIP0Q7NcGA6qtnBlDb69qDFnJRbFPhLjgAvu1gE0D2w0i0IVPcxtY51FIhEpvhjYjqLdbakFFWw9ZvfSo+FIX6H75DnOqTaShtO6MLAZcC/iwJcVt3DEUz0L+sGjFPszN++/7ZucQsW7Yxmum7a5ShvHtPM4zaf+sH4HOGDIYEZLPOI9zurVQ0xXlLlTO3XcBuhTJLFGeivwNrYZqCdKfrpA+Xn2edtBKfGFUvhhfNn0xnaVMbPV5zh6cUiO561u0IDq4hgxlNvlR5/jXkx/K6+EjhNDjw9kC/0qiXOxT6xx7h5aAi+0DOYt9pfuXaQcIWHXFNsVipVAFgBDeMMQ+XMz/BqKboceG7pdKdAEv7zxdnv9hirtw73NQ/IW3on5S7RpiqXRZ5grl5Y0TrPL3XCuQiFDCmGCher3Sm6qi/fdbmUciLWBg/TTdDkuG1T6D1BiBLmsHWsesPUemNMSpwb3465IKCc3jYgbIowbU2BEC7AdsS97rZXyNB7Z4bN+j/RimRQ9PH9m14eVZfGVhooKgoF00mhvkfPK0Urx90C3ExE="
-script: istanbul cover node_modules/mocha/bin/_mocha -- -R spec
+script: nyc cover node_modules/mocha/bin/_mocha -- -R spec
 before_script:
-  - yarn add codeclimate-test-reporter istanbul -g
+  - yarn add codeclimate-test-reporter nyc -g
 after_script:
   - codeclimate-test-reporter < ./coverage/lcov.info
