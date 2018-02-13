@@ -20,10 +20,10 @@ describe('downloader', () => {
   });
 
   it('should fetch the current rates from the European Central Bank and return the path', () =>
-    expect(downloader.fetchCurrentRates()).to.eventually.equal('./data/eurofxref.csv'));
+    expect(downloader.fetchCurrentRates()).to.eventually.equal('./data/eurofxref.csv')).timeout(5000);
 
   it('should fetch the historical rates from the European Central Bank and return the path', () =>
-    expect(downloader.fetchHistoricalRates()).to.eventually.equal('./data/eurofxref-hist.csv'));
+    expect(downloader.fetchHistoricalRates()).to.eventually.equal('./data/eurofxref-hist.csv')).timeout(5000);
 
   describe('cli', () => {
     let stub;
