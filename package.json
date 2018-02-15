@@ -17,6 +17,7 @@
     "graphql": "0.11.3",
     "graphql-tool": "^1.0.0",
     "graphql-tools": "^2.20.1",
+    "node-schedule": "^1.3.0",
     "prop-types": "^15.6.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
@@ -24,10 +25,11 @@
     "unzip": "^0.1.11"
   },
   "scripts": {
-    "start": "yarn fetchAllRates && node src/server.js",
-    "fetchCurrentRates": "node \"require('./src/utils/downloader').cli()\" daily",
-    "fetchHistoricalRates": "node \"require('./src/utils/downloader').cli()\" historical",
+    "start": "yarn fetchAllRates && yarn schedule && node src/server.js",
+    "fetchCurrentRates": "node -e \"require('./src/utils/downloader').cli()\" daily",
+    "fetchHistoricalRates": "node -e \"require('./src/utils/downloader').cli()\" historical",
     "fetchAllRates": "node -e \"require('./src/utils/downloader').cli()\" all",
+    "schedule": "node -e \"require('./src/utils/downloader').cli()\" schedule",
     "test": "nyc --reporter=text --all mocha --exit",
     "eslint": "eslint src/"
   },
@@ -39,6 +41,7 @@
     "eslint-plugin-import": "^2.8.0",
     "mocha": "^5.0.0",
     "mock-fs": "^4.4.2",
+    "nock": "^9.1.6",
     "nyc": "^11.4.1",
     "rewire": "^3.0.2",
     "sinon": "^4.3.0"
