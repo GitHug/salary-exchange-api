@@ -86,7 +86,7 @@ const fetchECBRates = hrefFunc =>
 let jobSchedule;
 const scheduleJob = () => {
   const rule = new schedule.RecurrenceRule();
-  rule.dayOfWeek = [0, new schedule.Range(0, 4)];
+  rule.dayOfWeek = [0, new schedule.Range(0, 5)];
   rule.hour = 16;
   rule.minute = 0;
 
