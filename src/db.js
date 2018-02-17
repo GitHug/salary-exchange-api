@@ -13,11 +13,16 @@ const calculateRate = (currency, referenceCurrency, totalAmount) =>
   currency && referenceCurrency &&
   (totalAmount || 1) * (referenceCurrency / currency);
 
+const findClosestDate = (date, exchangeRates) =>
+  exchangeRates.find(rate => rate.Date <= date) || {};
+
 const fetchRates = query => new Promise((resolve, reject) => {
   csvParser('./data/eurofxref-hist.csv')
-    .then(exchangeRates =>
+    .then((exchangeRates) => {
+      const closestDate = findClosestDate(query.period, exchangeRates).Date;
+
       resolve(exchangeRates
-        .filter(rate => rate.Date >= query.period)
+        .filter(rate => rate.Date >= (closestDate || query.period))
         .map(rate => (
           {
             date: rate.Date,
@@ -28,7 +33,8 @@ const fetchRates = query => new Promise((resolve, reject) => {
               calculateRate(rate[query.currency], rate[query.referenceCurrency], query.amount),
             amount: query.amount,
           }
-        ))))
+        )));
+    })
     .catch(err => reject(err));
 });
 
