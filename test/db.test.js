@@ -29,8 +29,8 @@ describe('db', () => {
       date: '2018-02-09',
       exchangeRate: 0.08923256375191053,
       referenceCurrency: 'GBP',
-      salary: 1000,
-      salaryExchangeRate: 89.23256375191053,
+      amount: 1000,
+      totalAmountExchangeRate: 89.23256375191053,
     }]));
 
   describe('when file is missing', () => {
