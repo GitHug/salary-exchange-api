@@ -1,11 +1,11 @@
 const csvParser = require('./utils/csvParser');
 
 class Query {
-  constructor(period, currency, referenceCurrency, salary) {
+  constructor(period, currency, referenceCurrency, amount) {
     this.period = period;
     this.currency = currency;
     this.referenceCurrency = referenceCurrency;
-    this.salary = salary;
+    this.amount = amount;
   }
 }
 
@@ -24,28 +24,12 @@ const fetchRates = query => new Promise((resolve, reject) => {
             currency: query.currency,
             referenceCurrency: query.referenceCurrency,
             exchangeRate: calculateRate(rate[query.currency], rate[query.referenceCurrency]),
-            salaryExchangeRate: query.salary &&
-              calculateRate(rate[query.currency], rate[query.referenceCurrency], query.salary),
-            salary: query.salary,
+            totalAmountExchangeRate: query.amount &&
+              calculateRate(rate[query.currency], rate[query.referenceCurrency], query.amount),
+            amount: query.amount,
           }
         ))))
     .catch(err => reject(err));
-
-  /* csvParser('./data/eurofxref-hist.csv')
-    .then(exchangeRates =>
-      resolve(exchangeRates
-        .filter(rate => rate.Date >= query.period)
-        .map(rate => (
-          {
-            date: rate.Date,
-            currency: query.currency,
-            referenceCurrency: query.referenceCurrency,
-            exchangeRate: calculateRate(rate[query.currency], rate[query.referenceCurrency]),
-            salaryExchangeRate:
-              calculateRate(rate[query.currency], rate[query.referenceCurrency], query.salary),
-          }
-        ))))
-    .catch(err => reject(err)); */
 });
 
 const db = {

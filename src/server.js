@@ -11,20 +11,21 @@ const schema = makeExecutableSchema({
   resolvers: {
     Query: {
       exchangeRates: (_, {
-        sinceDate, currency, referenceCurrency, salary,
+        sinceDate, currency, referenceCurrency, amount,
       }) =>
-        fetchRates(new Query(sinceDate, currency, referenceCurrency, salary)),
+        fetchRates(new Query(sinceDate, currency, referenceCurrency, amount)),
     },
   },
 });
 
 const app = express();
+app.get('/', (_, res) => res.redirect('/graphiql'));
 app.get('/exchangeRates', ({
   query: {
-    sinceDate, currency, referenceCurrency, salary,
+    sinceDate, currency, referenceCurrency, amount,
   },
 }, res) =>
-  fetchRates(new Query(sinceDate, currency, referenceCurrency, salary))
+  fetchRates(new Query(sinceDate, currency, referenceCurrency, amount))
     .then(data => res.json(data)));
 
 app.use('/graphql', bodyParser.json(), graphqlExpress({ schema }));
