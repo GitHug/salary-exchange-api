@@ -25,7 +25,7 @@
     "unzip": "^0.1.11"
   },
   "scripts": {
-    "start": "yarn fetchAllRates && yarn schedule && node src/server.js",
+    "start": "yarn fetchAllRates & yarn schedule & node src/server.js",
     "fetchCurrentRates": "node -e \"require('./src/utils/downloader').cli()\" daily",
     "fetchHistoricalRates": "node -e \"require('./src/utils/downloader').cli()\" historical",
     "fetchAllRates": "node -e \"require('./src/utils/downloader').cli()\" all",
