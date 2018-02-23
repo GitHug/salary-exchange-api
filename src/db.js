@@ -9,12 +9,29 @@ class Query {
   }
 }
 
-const calculateRate = (currency, referenceCurrency, totalAmount) =>
-  currency && referenceCurrency &&
-  (totalAmount || 1) * (referenceCurrency / currency);
-
 const findClosestDate = (date, exchangeRates) =>
   exchangeRates.find(rate => rate.Date <= date) || {};
+
+const calculateRate = (currency, referenceCurrency) => {
+  if (currency && referenceCurrency) {
+    return referenceCurrency / currency;
+  }
+  return 0;
+};
+
+const getExchangeRate = (rate, query) => {
+  let exchangeRate;
+  const { currency, referenceCurrency } = query;
+  if (currency === 'EUR') {
+    exchangeRate = parseFloat(rate[referenceCurrency]);
+  } else if (referenceCurrency === 'EUR') {
+    exchangeRate = parseFloat(rate[currency]);
+  } else {
+    exchangeRate = calculateRate(rate[currency], rate[referenceCurrency]);
+  }
+
+  return exchangeRate;
+};
 
 const fetchRates = query => new Promise((resolve, reject) => {
   csvParser('./data/eurofxref-hist.csv')
@@ -23,17 +40,20 @@ const fetchRates = query => new Promise((resolve, reject) => {
 
       resolve(exchangeRates
         .filter(rate => rate.Date >= (closestDate || query.period))
-        .map(rate => (
-          {
+        .map((rate) => {
+          const exchangeRate = getExchangeRate(rate, query);
+          const { currency, referenceCurrency, amount } = query;
+          const totalAmountExchangeRate = exchangeRate * amount;
+
+          return {
             date: rate.Date,
-            currency: query.currency,
-            referenceCurrency: query.referenceCurrency,
-            exchangeRate: calculateRate(rate[query.currency], rate[query.referenceCurrency]),
-            totalAmountExchangeRate: query.amount &&
-              calculateRate(rate[query.currency], rate[query.referenceCurrency], query.amount),
-            amount: query.amount,
-          }
-        )));
+            currency,
+            referenceCurrency,
+            exchangeRate,
+            totalAmountExchangeRate: totalAmountExchangeRate || undefined,
+            amount,
+          };
+        }));
     })
     .catch(err => reject(err));
 });

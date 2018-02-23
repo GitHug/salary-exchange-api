@@ -33,6 +33,16 @@ describe('db', () => {
       totalAmountExchangeRate: 89.23256375191053,
     }]));
 
+  it('should return records with the reference rates for Euro', () =>
+    expect(fetchRates(new Query('2018-02-09', 'EUR', 'GBP', 1000))).to.eventually.deep.equal([{
+      currency: 'EUR',
+      date: '2018-02-09',
+      exchangeRate: 0.8874,
+      referenceCurrency: 'GBP',
+      amount: 1000,
+      totalAmountExchangeRate: 887.4,
+    }]));
+
   describe('when file is missing', () => {
     beforeEach(() => {
       mock({
