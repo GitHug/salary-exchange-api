@@ -43,6 +43,18 @@ describe('db', () => {
       totalAmountExchangeRate: 887.4,
     }]));
 
+  it('should return records in chronological order (later to most recent)', (done) => {
+    fetchRates(new Query('2018-02-07', 'EUR', 'GBP', 1000))
+      .then((rate) => {
+        expect(rate).to.be.an('array').of.length(3);
+        expect(rate[0].date).to.equal('2018-02-07');
+        expect(rate[1].date).to.equal('2018-02-08');
+        expect(rate[2].date).to.equal('2018-02-09');
+
+        done();
+      });
+  });
+
   describe('when file is missing', () => {
     beforeEach(() => {
       mock({

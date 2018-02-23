@@ -53,7 +53,8 @@ const fetchRates = query => new Promise((resolve, reject) => {
             totalAmountExchangeRate: totalAmountExchangeRate || undefined,
             amount,
           };
-        }));
+        })
+        .reverse());
     })
     .catch(err => reject(err));
 });
