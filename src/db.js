@@ -46,7 +46,6 @@ const fetchRates = query => new Promise((resolve, reject) => {
   csvParser('./data/eurofxref-hist.csv')
     .then((exchangeRates) => {
       const date = findDate(query.period, exchangeRates);
-      console.log(date);
       const closestDate = findClosestDate(date, exchangeRates);
 
       resolve(exchangeRates
