@@ -8,10 +8,10 @@ const { Query, fetchRates } = require('./db');
 
 const resolvers = {
   Period: {
-    ONE_MONTH: { value: 1, unit: 'months' },
+    ONE_MONTH: { value: 1, unit: 'month' },
     THREE_MONTHS: { value: 3, unit: 'months' },
     SIX_MONTHS: { value: 6, unit: 'months' },
-    ONE_YEAR: { value: 1, unit: 'years' },
+    ONE_YEAR: { value: 1, unit: 'year' },
     THREE_YEARS: { value: 3, unit: 'years' },
     FIVE_YEARS: { value: 5, unit: 'years' },
     ALL: { value: 'all' },

@@ -54,7 +54,7 @@ describe('db', () => {
     });
 
     it('should return records in chronological order (later to most recent)', (done) => {
-      fetchRates(new Query({ value: 3, unit: 'days' }, 'EUR', 'GBP', 1000))
+      fetchRates(new Query({ value: 2, unit: 'days' }, 'EUR', 'GBP', 1000))
         .then((rate) => {
           expect(rate).to.be.an('array').of.length(3);
           expect(rate[0].date).to.equal('2018-02-07');

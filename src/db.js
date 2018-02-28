@@ -15,7 +15,7 @@ const findDate = ({ value, unit }, exchangeRates) => {
   if (value === 'all') {
     return exchangeRates[exchangeRates.length - 1].Date;
   }
-  return moment(date).subtract(value - 1, unit).format('YYYY-MM-DD');
+  return moment(date).subtract(value, unit).format('YYYY-MM-DD');
 };
 
 const findClosestDate = (date, exchangeRates) =>
@@ -46,6 +46,7 @@ const fetchRates = query => new Promise((resolve, reject) => {
   csvParser('./data/eurofxref-hist.csv')
     .then((exchangeRates) => {
       const date = findDate(query.period, exchangeRates);
+      console.log(date);
       const closestDate = findClosestDate(date, exchangeRates);
 
       resolve(exchangeRates
