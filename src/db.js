@@ -1,3 +1,4 @@
+const moment = require('moment');
 const csvParser = require('./utils/csvParser');
 
 class Query {
@@ -8,6 +9,11 @@ class Query {
     this.amount = amount;
   }
 }
+
+const findDate = ({ value, unit }) => {
+  const date = new Date();
+  return moment(date).subtract(value, unit).format('YYYY-MM-DD');
+};
 
 const findClosestDate = (date, exchangeRates) =>
   exchangeRates.find(rate => rate.Date <= date) || {};
@@ -36,7 +42,8 @@ const getExchangeRate = (rate, query) => {
 const fetchRates = query => new Promise((resolve, reject) => {
   csvParser('./data/eurofxref-hist.csv')
     .then((exchangeRates) => {
-      const closestDate = findClosestDate(query.period, exchangeRates).Date;
+      const date = findDate(query.period);
+      const closestDate = findClosestDate(date, exchangeRates).Date;
 
       resolve(exchangeRates
         .filter(rate => rate.Date >= (closestDate || query.period))

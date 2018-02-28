@@ -6,16 +6,27 @@ const { makeExecutableSchema } = require('graphql-tools');
 
 const { Query, fetchRates } = require('./db');
 
+const resolvers = {
+  Period: {
+    ONE_MONTH: { value: 1, unit: 'months' },
+    THREE_MONTHS: { value: 3, unit: 'months' },
+    SIX_MONTHS: { value: 6, unit: 'months' },
+    ONE_YEAR: { value: 1, unit: 'years' },
+    THREE_YEARS: { value: 3, unit: 'years' },
+    FIVE_YEARS: { value: 5, unit: 'years' },
+    ALL: { value: 'all' },
+  },
+  Query: {
+    exchangeRates: (_, {
+      period, currency, referenceCurrency, amount,
+    }) =>
+      fetchRates(new Query(period, currency, referenceCurrency, amount)),
+  },
+};
+
 const schema = makeExecutableSchema({
   typeDefs: readFileSync('schema.graphql', 'utf8'),
-  resolvers: {
-    Query: {
-      exchangeRates: (_, {
-        sinceDate, currency, referenceCurrency, amount,
-      }) =>
-        fetchRates(new Query(sinceDate, currency, referenceCurrency, amount)),
-    },
-  },
+  resolvers,
 });
 
 const app = express();

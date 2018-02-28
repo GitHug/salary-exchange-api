@@ -1,14 +1,25 @@
 type Query {
   exchangeRates(
-    sinceDate: String = "1970-01-01", 
+    period: Period!,
     currency: String!,
     referenceCurrency: String!,
     amount: Float): [ExchangeRate]
 }
+
 type ExchangeRate {
   date: String!
   currency: String!
   referenceCurrency: String!
   exchangeRate: Float!
   totalAmountExchangeRate: Float!
+}
+
+enum Period {
+  ONE_MONTH,
+  THREE_MONTHS,
+  SIX_MONTHS,
+  ONE_YEAR,
+  THREE_YEARS,
+  FIVE_YEARS,
+  ALL
 }
