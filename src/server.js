@@ -31,12 +31,13 @@ const schema = makeExecutableSchema({
 
 const app = express();
 app.get('/', (_, res) => res.redirect('/graphiql'));
+app.get('/ping', (_, res) => res.json(200));
 app.get('/exchangeRates', ({
   query: {
-    sinceDate, currency, referenceCurrency, amount,
+    period, currency, referenceCurrency, amount,
   },
 }, res) =>
-  fetchRates(new Query(sinceDate, currency, referenceCurrency, amount))
+  fetchRates(new Query(period, currency, referenceCurrency, amount))
     .then(data => res.json(data)));
 
 app.use('/graphql', bodyParser.json(), graphqlExpress({ schema }));

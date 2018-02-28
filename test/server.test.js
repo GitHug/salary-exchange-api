@@ -22,14 +22,14 @@ describe('server', () => {
   });
 
   it('should return 200', (done) => {
-    http.get('http://localhost:1343/exchangeRates', (res) => {
+    http.get('http://localhost:1343/ping', (res) => {
       expect(res.statusCode).to.equal(200);
       done();
     });
   });
 
   it('should return data', (done) => {
-    http.get('http://localhost:1343/exchangeRates?sinceDate=2018-02-09&currency=SEK&referenceCurrency=USD', (res) => {
+    http.get('http://localhost:1343/exchangeRates?period=THREE_MONTHS&currency=SEK&referenceCurrency=USD', (res) => {
       let data = '';
 
       res.on('data', (chunk) => {
