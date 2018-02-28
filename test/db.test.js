@@ -18,13 +18,13 @@ describe('db', () => {
   });
 
   it('should return one record if the latest available data', () =>
-    expect(fetchRates(new Query('2018-02-09'))).to.eventually.have.length(1));
+    expect(fetchRates(new Query({ value: 1, unit: 'days' }))).to.eventually.have.length(1));
 
   it('should return all records if the date is from way back', () =>
-    expect(fetchRates(new Query('1970-01-01'))).to.eventually.have.length(29));
+    expect(fetchRates(new Query({ value: 'all' }))).to.eventually.have.length(29));
 
   it('should return records with the reference rates', () =>
-    expect(fetchRates(new Query('2018-02-09', 'SEK', 'GBP', 1000))).to.eventually.deep.equal([{
+    expect(fetchRates(new Query({ value: 1, unit: 'days' }, 'SEK', 'GBP', 1000))).to.eventually.deep.equal([{
       currency: 'SEK',
       date: '2018-02-09',
       exchangeRate: 0.08923256375191053,
@@ -34,7 +34,7 @@ describe('db', () => {
     }]));
 
   it('should return records with the reference rates for Euro', () =>
-    expect(fetchRates(new Query('2018-02-09', 'EUR', 'GBP', 1000))).to.eventually.deep.equal([{
+    expect(fetchRates(new Query({ value: 1, unit: 'days' }, 'EUR', 'GBP', 1000))).to.eventually.deep.equal([{
       currency: 'EUR',
       date: '2018-02-09',
       exchangeRate: 0.8874,
@@ -43,17 +43,33 @@ describe('db', () => {
       totalAmountExchangeRate: 887.4,
     }]));
 
-  it('should return records in chronological order (later to most recent)', (done) => {
-    fetchRates(new Query('2018-02-07', 'EUR', 'GBP', 1000))
-      .then((rate) => {
-        expect(rate).to.be.an('array').of.length(3);
-        expect(rate[0].date).to.equal('2018-02-07');
-        expect(rate[1].date).to.equal('2018-02-08');
-        expect(rate[2].date).to.equal('2018-02-09');
+  describe('the chronological order', () => {
+    let originalDateNow;
+    const mockDateNow = () =>
+      1518177600000; // 2018-02-09
 
-        done();
-      });
+    beforeEach(() => {
+      originalDateNow = Date.now;
+      Date.now = mockDateNow;
+    });
+
+    it('should return records in chronological order (later to most recent)', (done) => {
+      fetchRates(new Query({ value: 3, unit: 'days' }, 'EUR', 'GBP', 1000))
+        .then((rate) => {
+          expect(rate).to.be.an('array').of.length(3);
+          expect(rate[0].date).to.equal('2018-02-07');
+          expect(rate[1].date).to.equal('2018-02-08');
+          expect(rate[2].date).to.equal('2018-02-09');
+
+          done();
+        });
+    });
+
+    afterEach(() => {
+      Date.now = originalDateNow;
+    });
   });
+
 
   describe('when file is missing', () => {
     beforeEach(() => {

@@ -10,13 +10,16 @@ class Query {
   }
 }
 
-const findDate = ({ value, unit }) => {
-  const date = new Date();
-  return moment(date).subtract(value, unit).format('YYYY-MM-DD');
+const findDate = ({ value, unit }, exchangeRates) => {
+  const date = Date.now();
+  if (value === 'all') {
+    return exchangeRates[exchangeRates.length - 1].Date;
+  }
+  return moment(date).subtract(value - 1, unit).format('YYYY-MM-DD');
 };
 
 const findClosestDate = (date, exchangeRates) =>
-  exchangeRates.find(rate => rate.Date <= date) || {};
+  (exchangeRates.find(rate => rate.Date <= date) || {}).Date;
 
 const calculateRate = (currency, referenceCurrency) => {
   if (currency && referenceCurrency) {
@@ -42,8 +45,8 @@ const getExchangeRate = (rate, query) => {
 const fetchRates = query => new Promise((resolve, reject) => {
   csvParser('./data/eurofxref-hist.csv')
     .then((exchangeRates) => {
-      const date = findDate(query.period);
-      const closestDate = findClosestDate(date, exchangeRates).Date;
+      const date = findDate(query.period, exchangeRates);
+      const closestDate = findClosestDate(date, exchangeRates);
 
       resolve(exchangeRates
         .filter(rate => rate.Date >= (closestDate || query.period))
