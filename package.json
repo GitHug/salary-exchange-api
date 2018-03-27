@@ -11,6 +11,7 @@
     "apollo-server-express": "^1.3.2",
     "body-parser": "^1.18.2",
     "cheerio": "^1.0.0-rc.2",
+    "cron": "^1.3.0",
     "csv-parse": "^2.0.2",
     "express": "^4.16.2",
     "fstream": "^1.0.11",
@@ -18,12 +19,13 @@
     "graphql-tool": "^1.0.0",
     "graphql-tools": "^2.20.1",
     "moment": "^2.20.1",
-    "node-schedule": "^1.3.0",
     "prop-types": "^15.6.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "request": "^2.83.0",
-    "unzip": "^0.1.11"
+    "request-promise": "^4.2.2",
+    "unzip": "^0.1.11",
+    "winston": "^2.4.1"
   },
   "scripts": {
     "start": "yarn fetchAllRates & yarn schedule & node src/server.js",
@@ -42,6 +44,7 @@
     "eslint-plugin-import": "^2.8.0",
     "mocha": "^5.0.0",
     "mock-fs": "^4.4.2",
+    "moment-timezone": "^0.5.14",
     "nock": "^9.1.6",
     "nyc": "^11.4.1",
     "rewire": "^3.0.2",

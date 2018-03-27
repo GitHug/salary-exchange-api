@@ -3,6 +3,10 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const { graphqlExpress, graphiqlExpress } = require('apollo-server-express');
 const { makeExecutableSchema } = require('graphql-tools');
+const scheduler = require('./utils/scheduler.js');
+
+// Schedule a job to download ECB data
+scheduler.scheduleJob();
 
 const { Query, fetchRates } = require('./db');
 
