@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const { graphqlExpress, graphiqlExpress } = require('apollo-server-express');
+const cors = require('cors');
 const scheduler = require('./utils/scheduler.js');
 const { Query, fetchRates } = require('./db');
 const schema = require('./schema');
@@ -9,6 +10,9 @@ const schema = require('./schema');
 scheduler.scheduleJob();
 
 const app = express();
+// Add headers
+app.use(cors({ origin: '*' }));
+
 app.get('/', (_, res) => res.redirect('/graphiql'));
 app.get('/ping', (_, res) => res.json(200));
 app.get('/exchangeRates', ({
