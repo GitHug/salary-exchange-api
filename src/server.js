@@ -13,8 +13,8 @@ const app = express();
 // Add headers
 app.use(cors({ origin: '*' }));
 
-app.get('/', (_, res) => res.redirect('/graphiql'));
-app.get('/ping', (_, res) => res.json(200));
+app.get('/', (_, res) => res.json(200));
+app.get('/ping', (_, res) => res.status(200).json('I\'m alive!'));
 app.get('/exchangeRates', ({
   query: {
     period, currency, referenceCurrency, amount,
