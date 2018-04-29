@@ -1,17 +1,10 @@
 const moment = require('moment');
 const csvParser = require('./utils/csvParser');
 
-class Query {
-  constructor(period, currency, referenceCurrency, amount) {
-    this.period = period;
-    this.currency = currency;
-    this.referenceCurrency = referenceCurrency;
-    this.amount = amount;
-  }
-}
-
-const findDate = ({ value, unit }, exchangeRates) => {
+const findDate = (period, exchangeRates) => {
   const date = Date.now();
+
+  const { value, unit } = (period || { value: 0, unit: 'days' });
   if (value === 'all') {
     return exchangeRates[exchangeRates.length - 1].Date;
   }
@@ -19,7 +12,7 @@ const findDate = ({ value, unit }, exchangeRates) => {
 };
 
 const findClosestDate = (date, exchangeRates) =>
-  (exchangeRates.find(rate => rate.Date <= date) || {}).Date;
+  (exchangeRates.find(rate => rate.Date <= date) || {}).Date || date;
 
 const calculateRate = (currency, referenceCurrency) => {
   if (currency && referenceCurrency) {
@@ -28,9 +21,8 @@ const calculateRate = (currency, referenceCurrency) => {
   return 0;
 };
 
-const getExchangeRate = (rate, query) => {
+const getExchangeRate = (rate, currency, referenceCurrency) => {
   let exchangeRate;
-  const { currency, referenceCurrency } = query;
   if (currency === 'EUR') {
     exchangeRate = parseFloat(rate[referenceCurrency]);
   } else if (referenceCurrency === 'EUR') {
@@ -42,37 +34,55 @@ const getExchangeRate = (rate, query) => {
   return exchangeRate;
 };
 
-const fetchRates = query => new Promise((resolve, reject) => {
-  csvParser('./data/eurofxref-hist.csv')
-    .then((exchangeRates) => {
-      const date = findDate(query.period, exchangeRates);
-      const closestDate = findClosestDate(date, exchangeRates);
+const fetchRates = (period, currency, referenceCurrency, amount) =>
+  new Promise((resolve, reject) => {
+    csvParser('./data/eurofxref-hist.csv')
+      .then((exchangeRates) => {
+        const date = findDate(period, exchangeRates);
+        const closestDate = findClosestDate(date, exchangeRates);
 
-      resolve(exchangeRates
-        .filter(rate => rate.Date >= (closestDate || query.period))
-        .map((rate) => {
-          const exchangeRate = getExchangeRate(rate, query);
-          const { currency, referenceCurrency, amount } = query;
-          const totalAmountExchangeRate = exchangeRate * amount;
+        resolve(exchangeRates
+          .filter(rate => rate.Date >= closestDate)
+          .map((rate) => {
+            const exchangeRate = getExchangeRate(rate, currency, referenceCurrency);
+            const totalAmountExchangeRate = exchangeRate * (amount || 1);
 
-          return {
-            date: rate.Date,
-            currency,
-            referenceCurrency,
-            exchangeRate,
-            totalAmountExchangeRate: totalAmountExchangeRate || undefined,
-            amount,
-          };
-        })
-        .reverse());
-    })
-    .catch(err => reject(err));
-});
+            return {
+              date: rate.Date,
+              currency,
+              referenceCurrency,
+              exchangeRate,
+              totalAmountExchangeRate: totalAmountExchangeRate || undefined,
+              amount,
+            };
+          })
+          .reverse());
+      })
+      .catch(err => reject(err));
+  });
 
-const db = {
-  fetchRates,
-  Query,
+const fetchRateForDate = async (date, currency, referenceCurrency) => {
+  const dateRate = (date || moment(Date.now()).format('YYYY-MM-DD'));
+
+  const exchangeRates = await csvParser('./data/eurofxref-hist.csv');
+
+  const earliestAvailableDate = exchangeRates[exchangeRates.length - 1].Date;
+  if (dateRate < earliestAvailableDate) {
+    throw new Error(`Date ${date} is before the earliest available date ${earliestAvailableDate}`);
+  }
+
+  const rateForDate = exchangeRates.find(rate => rate.Date <= dateRate);
+  const exchangeRate = getExchangeRate(rateForDate, currency, referenceCurrency);
+
+  return {
+    date: rateForDate.Date,
+    currency,
+    referenceCurrency,
+    exchangeRate,
+  };
 };
+
+const db = { fetchRates, fetchRateForDate };
 
 module.exports = db;
 

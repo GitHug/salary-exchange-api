@@ -3,7 +3,15 @@ type Query {
     period: Period!,
     currency: String!,
     referenceCurrency: String!,
-    amount: Float): [ExchangeRate]
+    amount: Float): [ExchangeRate],
+
+  buyingPower(
+    period: Period,
+    date: String,
+    currency: String!,
+    referenceCurrency: String!,
+    amount: Float
+  ): BuyingPower
 }
 
 type ExchangeRate {
@@ -22,4 +30,19 @@ enum Period {
   THREE_YEARS,
   FIVE_YEARS,
   ALL
+}
+
+type BuyingPower {
+  historicalExchangeRate: ExchangeRate,
+  currentExchangeRate: ExchangeRate,
+  difference: BuyingPowerDifference!
+}
+
+type BuyingPowerDifference {
+  rate: Float!,
+  ratePercentage: Float!,
+  sinceDate: String!,
+  latestDate: String!,
+  originalBuyingPower: Float,
+  currentBuyingPower: Float,
 }
