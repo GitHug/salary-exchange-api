@@ -42,6 +42,7 @@ describe('server', () => {
           currency: 'SEK',
           referenceCurrency: 'USD',
           exchangeRate: 0.12341122998954226,
+          totalAmountExchangeRate: 0.12341122998954226,
         }]);
         done();
       });

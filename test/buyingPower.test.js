@@ -81,9 +81,9 @@ describe('buyingPower', () => {
         referenceCurrency: 'EUR',
       },
       difference: {
-        currentBuyingPower: 49724.00,
+        currentBuyingPower: '49724.00',
         latestDate: '2018-02-09',
-        originalBuyingPower: 49292.50,
+        originalBuyingPower: '49292.50',
         rate: '0.0863',
         ratePercentage: '0.88',
         sinceDate: '2018-02-07',
