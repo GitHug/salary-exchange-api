@@ -6,3 +6,4 @@ data/*
 .vscode/
 keys/*
 yarn-error.log
+.env
