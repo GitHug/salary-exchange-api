@@ -1,18 +1,18 @@
 const { fetchRates, fetchRateForDate } = require('./db');
 
-const getExchangeRate = async (period, date, currency, referenceCurrency) => {
+const getExchangeRate = async (period, date, currencyFrom, currencyTo) => {
   let historicalExchangeRate;
   let currentExchangeRate;
 
   if (period) {
-    const historicalExchangeRates = await fetchRates(period, currency, referenceCurrency);
-    const currentExchangeRates = await fetchRates(null, currency, referenceCurrency);
+    const historicalExchangeRates = await fetchRates(period, currencyFrom, currencyTo);
+    const currentExchangeRates = await fetchRates(null, currencyFrom, currencyTo);
 
     [historicalExchangeRate] = historicalExchangeRates;
     [currentExchangeRate] = currentExchangeRates;
   } else if (date) {
-    historicalExchangeRate = await fetchRateForDate(date, currency, referenceCurrency);
-    currentExchangeRate = await fetchRateForDate(null, currency, referenceCurrency);
+    historicalExchangeRate = await fetchRateForDate(date, currencyFrom, currencyTo);
+    currentExchangeRate = await fetchRateForDate(null, currencyFrom, currencyTo);
   } else {
     throw new Error('Both period and date can not be empty');
   }

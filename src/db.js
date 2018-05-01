@@ -14,27 +14,27 @@ const findDate = (period, exchangeRates) => {
 const findClosestDate = (date, exchangeRates) =>
   (exchangeRates.find(rate => rate.Date <= date) || {}).Date || date;
 
-const calculateRate = (currency, referenceCurrency) => {
-  if (currency && referenceCurrency) {
-    return referenceCurrency / currency;
+const calculateRate = (currencyFrom, currencyTo) => {
+  if (currencyFrom && currencyTo) {
+    return currencyTo / currencyFrom;
   }
   return 0;
 };
 
-const getExchangeRate = (rate, currency, referenceCurrency) => {
+const getExchangeRate = (rate, currencyFrom, currencyTo) => {
   let exchangeRate;
-  if (currency === 'EUR') {
-    exchangeRate = parseFloat(rate[referenceCurrency]);
-  } else if (referenceCurrency === 'EUR') {
-    exchangeRate = parseFloat(rate[currency]);
+  if (currencyFrom === 'EUR') {
+    exchangeRate = parseFloat(rate[currencyTo]);
+  } else if (currencyTo === 'EUR') {
+    exchangeRate = parseFloat(rate[currencyFrom]);
   } else {
-    exchangeRate = calculateRate(rate[currency], rate[referenceCurrency]);
+    exchangeRate = calculateRate(rate[currencyFrom], rate[currencyTo]);
   }
 
   return exchangeRate;
 };
 
-const fetchRates = (period, currency, referenceCurrency, amount) =>
+const fetchRates = (period, currencyFrom, currencyTo, amount) =>
   new Promise((resolve, reject) => {
     csvParser('./data/eurofxref-hist.csv')
       .then((exchangeRates) => {
@@ -44,13 +44,13 @@ const fetchRates = (period, currency, referenceCurrency, amount) =>
         resolve(exchangeRates
           .filter(rate => rate.Date >= closestDate)
           .map((rate) => {
-            const exchangeRate = getExchangeRate(rate, currency, referenceCurrency);
+            const exchangeRate = getExchangeRate(rate, currencyFrom, currencyTo);
             const totalAmountExchangeRate = exchangeRate * (amount || 1);
 
             return {
               date: rate.Date,
-              currency,
-              referenceCurrency,
+              currencyFrom,
+              currencyTo,
               exchangeRate,
               totalAmountExchangeRate: totalAmountExchangeRate || undefined,
               amount,
@@ -61,7 +61,7 @@ const fetchRates = (period, currency, referenceCurrency, amount) =>
       .catch(err => reject(err));
   });
 
-const fetchRateForDate = async (date, currency, referenceCurrency) => {
+const fetchRateForDate = async (date, currencyFrom, currencyTo) => {
   const dateRate = (date || moment(Date.now()).format('YYYY-MM-DD'));
 
   const exchangeRates = await csvParser('./data/eurofxref-hist.csv');
@@ -72,12 +72,12 @@ const fetchRateForDate = async (date, currency, referenceCurrency) => {
   }
 
   const rateForDate = exchangeRates.find(rate => rate.Date <= dateRate);
-  const exchangeRate = getExchangeRate(rateForDate, currency, referenceCurrency);
+  const exchangeRate = getExchangeRate(rateForDate, currencyFrom, currencyTo);
 
   return {
     date: rateForDate.Date,
-    currency,
-    referenceCurrency,
+    currencyFrom,
+    currencyTo,
     exchangeRate,
   };
 };

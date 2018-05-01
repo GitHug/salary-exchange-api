@@ -2,7 +2,7 @@ const fstream = require('fstream');
 const https = require('https');
 const cheerio = require('cheerio');
 const rp = require('request-promise');
-const unzip = require('unzip');
+const unzip = require('unzipper');
 const logger = require('./logger');
 
 const findFileURL = async (selector) => {

@@ -1,7 +1,8 @@
 const { readFileSync } = require('fs');
 const { makeExecutableSchema } = require('graphql-tools');
 const { fetchRates } = require('./db');
-const { fetchBuyingPower } = require('./buyingPower');
+const { fetchBuyingPower } = require('./fetchBuyingPower');
+const { fetchLatestExchangeRate } = require('./fetchLatestExchangeRate');
 
 const resolvers = {
   Period: {
@@ -15,13 +16,17 @@ const resolvers = {
   },
   Query: {
     exchangeRates: (_, {
-      period, currency, referenceCurrency, amount,
+      period, currencyFrom, currencyTo, amount,
     }) =>
-      fetchRates(period, currency, referenceCurrency, amount),
+      fetchRates(period, currencyFrom, currencyTo, amount),
     buyingPower: (_, {
-      period, date, currency, referenceCurrency, amount,
+      period, date, currencyFrom, currencyTo, amount,
     }) =>
-      fetchBuyingPower(period, date, currency, referenceCurrency, amount),
+      fetchBuyingPower(period, date, currencyFrom, currencyTo, amount),
+    latestExchangeRate: (_, {
+      currencyFrom, currencyTo,
+    }) =>
+      fetchLatestExchangeRate(currencyFrom, currencyTo),
   },
 };
 

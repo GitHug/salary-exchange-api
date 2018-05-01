@@ -1,23 +1,30 @@
 type Query {
   exchangeRates(
     period: Period!,
-    currency: String!,
-    referenceCurrency: String!,
+    currencyFrom: String!,
+    currencyTo: String!,
     amount: Float): [ExchangeRate],
 
   buyingPower(
     period: Period,
     date: String,
-    currency: String!,
-    referenceCurrency: String!,
+    currencyFrom: String!,
+    currencyTo: String!,
     amount: Float
-  ): BuyingPower
+  ): BuyingPower,
+
+  latestExchangeRate(
+    currencyFrom: String!,
+    currencyTo: String!
+  ): ExchangeRate
 }
 
 type ExchangeRate {
   date: String!
-  currency: String!
-  referenceCurrency: String!
+  time: String,
+  timezone: String,
+  currencyFrom: String!
+  currencyTo: String!
   exchangeRate: Float!
   totalAmountExchangeRate: Float!
 }
