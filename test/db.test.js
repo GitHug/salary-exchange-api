@@ -26,30 +26,30 @@ describe('db', () => {
 
   it('should return records with the reference rates', () =>
     expect(fetchRates({ value: 1, unit: 'days' }, 'SEK', 'GBP', 1000)).to.eventually.deep.equal([{
-      currency: 'SEK',
+      currencyFrom: 'SEK',
       date: '2018-02-09',
       exchangeRate: 0.08923256375191053,
-      referenceCurrency: 'GBP',
+      currencyTo: 'GBP',
       amount: 1000,
       totalAmountExchangeRate: 89.23256375191053,
     }]));
 
   it('should return records with the reference rates for Euro', () =>
     expect(fetchRates({ value: 1, unit: 'days' }, 'EUR', 'GBP', 1000)).to.eventually.deep.equal([{
-      currency: 'EUR',
+      currencyFrom: 'EUR',
       date: '2018-02-09',
       exchangeRate: 0.8874,
-      referenceCurrency: 'GBP',
+      currencyTo: 'GBP',
       amount: 1000,
       totalAmountExchangeRate: 887.4,
     }]));
 
   it('should return the latest available records if no perioded provided', () =>
     expect(fetchRates(undefined, 'EUR', 'GBP', 1000)).to.eventually.deep.equal([{
-      currency: 'EUR',
+      currencyFrom: 'EUR',
       date: '2018-02-09',
       exchangeRate: 0.8874,
-      referenceCurrency: 'GBP',
+      currencyTo: 'GBP',
       amount: 1000,
       totalAmountExchangeRate: 887.4,
     }]));
@@ -58,19 +58,19 @@ describe('db', () => {
     const rates = await (fetchRates({ value: 30, unit: 'years' }, 'EUR', 'GBP', 1000));
     expect(rates[0]).to.deep.equal({
       amount: 1000,
-      currency: 'EUR',
+      currencyFrom: 'EUR',
       date: '2018-01-02',
       exchangeRate: 0.88953,
-      referenceCurrency: 'GBP',
+      currencyTo: 'GBP',
       totalAmountExchangeRate: 889.5300000000001,
     });
 
     expect(rates[rates.length - 1]).to.deep.equal({
       amount: 1000,
-      currency: 'EUR',
+      currencyFrom: 'EUR',
       date: '2018-02-09',
       exchangeRate: 0.8874,
-      referenceCurrency: 'GBP',
+      currencyTo: 'GBP',
       totalAmountExchangeRate: 887.4,
     });
   });
@@ -127,17 +127,17 @@ describe('db', () => {
     it('should return the rate for the given date', () =>
       expect(fetchRateForDate('2018-02-07', 'EUR', 'SEK')).to.eventually.deep.equal({
         date: '2018-02-07',
-        currency: 'EUR',
+        currencyFrom: 'EUR',
         exchangeRate: 9.8585,
-        referenceCurrency: 'SEK',
+        currencyTo: 'SEK',
       }));
 
     it('should return the next closest earliest date if no exact date exists', () =>
       expect(fetchRateForDate('3000-02-07', 'USD', 'EUR')).to.eventually.deep.equal({
         date: '2018-02-09',
-        currency: 'USD',
+        currencyFrom: 'USD',
         exchangeRate: 1.2273,
-        referenceCurrency: 'EUR',
+        currencyTo: 'EUR',
       }));
 
     it('should throw an exception if the given date is before the earliest available date', () =>
@@ -151,9 +151,9 @@ describe('db', () => {
 
       it('should use today`s date', () => expect(fetchRateForDate(undefined, 'USD', 'SEK')).to.eventually.deep.equal({
         date: '2018-02-08',
-        currency: 'USD',
+        currencyFrom: 'USD',
         exchangeRate: 8.077701599738818,
-        referenceCurrency: 'SEK',
+        currencyTo: 'SEK',
       }));
 
       after(() => {
