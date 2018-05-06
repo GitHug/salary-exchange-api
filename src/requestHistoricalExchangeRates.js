@@ -4,7 +4,7 @@ const permCache = require('./permCache');
 const logger = require('./utils/logger');
 
 const options = {
-  uri: 'http://localhost:49161/rates/historical',
+  uri: process.env.HISTORICAL_RATES_SERVICE || 'http://localhost:49161/rates/historical',
   headers: {
     'User-Agent': 'Request-Promise',
   },
