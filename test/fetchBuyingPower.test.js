@@ -1,100 +1,112 @@
 const chai = require('chai');
-const fs = require('fs');
-const path = require('path');
 const chaiAsPromised = require('chai-as-promised');
-const mock = require('mock-fs');
+const sinon = require('sinon');
+const nock = require('nock');
 const { fetchBuyingPower } = require('../src/fetchBuyingPower');
+const cache = require('../src/cache');
+const permCache = require('../src/permCache');
+const json = require('./rates.json');
 
 chai.use(chaiAsPromised);
 const { expect } = chai;
 
 describe('buyingPower', () => {
-  beforeEach(() => {
-    const mockData = fs.readFileSync(path.join(__dirname, '/test-exchangerates.csv'), 'utf8');
+  let clock;
 
-    mock({
-      './data/eurofxref-hist.csv': mockData,
-    });
+  beforeEach(() => {
+    cache.init(1);
+    permCache.init();
+
+    clock = sinon.useFakeTimers(new Date('2018-05-04'));
+
+    nock('http://localhost:49161')
+      .get('/rates/historical')
+      .reply(200, json);
   });
 
   it('should throw an error if both period and date is missing', () =>
     expect(fetchBuyingPower()).to.eventually.be.rejectedWith(Error));
 
   it('should always use period if available', () =>
-    expect(fetchBuyingPower({ value: 'all' }, '2018-02-07', 'SEK', 'EUR')).to.eventually.deep.equal({
+    expect(fetchBuyingPower({ value: 'all' }, '2018-05-02', 'SEK', 'EUR')).to.eventually.deep.equal({
       currentExchangeRate: {
         amount: undefined,
         currencyFrom: 'SEK',
-        date: '2018-02-09',
-        exchangeRate: 9.9448,
+        date: '2018-05-04',
+        exchangeRate: 10.5715,
+        totalAmountExchangeRate: 10.5715,
         currencyTo: 'EUR',
-        totalAmountExchangeRate: 9.9448,
       },
       difference: {
         currentBuyingPower: undefined,
-        latestDate: '2018-02-09',
+        latestDate: '2018-05-04',
         originalBuyingPower: undefined,
-        rate: '0.1165',
-        ratePercentage: '1.19',
-        sinceDate: '2018-01-02',
+        rate: '-0.0459',
+        ratePercentage: '-0.43',
+        sinceDate: '2018-05-02',
       },
       historicalExchangeRate: {
         amount: undefined,
         currencyFrom: 'SEK',
-        date: '2018-01-02',
-        exchangeRate: 9.8283,
+        "date": "2018-05-02",
+        "exchangeRate": 10.6174,
+        "totalAmountExchangeRate": 10.6174,
         currencyTo: 'EUR',
-        totalAmountExchangeRate: 9.8283,
       },
     }));
 
   it('should use the date if period is not available', () =>
-    expect(fetchBuyingPower(undefined, '2018-02-07', 'SEK', 'EUR')).to.eventually.deep.equal({
+    expect(fetchBuyingPower(undefined, '2018-05-02', 'SEK', 'EUR')).to.eventually.deep.equal({
       currentExchangeRate: {
         currencyFrom: 'SEK',
-        date: '2018-02-09',
-        exchangeRate: 9.9448,
+        date: '2018-05-04',
+        exchangeRate: 10.5715,
         currencyTo: 'EUR',
       },
       difference: {
         currentBuyingPower: undefined,
-        latestDate: '2018-02-09',
+        latestDate: '2018-05-04',
         originalBuyingPower: undefined,
-        rate: '0.0863',
-        ratePercentage: '0.88',
-        sinceDate: '2018-02-07',
+        rate: '-0.0459',
+        ratePercentage: '-0.43',
+        sinceDate: '2018-05-02',
       },
       historicalExchangeRate: {
         currencyFrom: 'SEK',
-        date: '2018-02-07',
-        exchangeRate: 9.8585,
+        date: '2018-05-02',
+        exchangeRate: 10.6174,
         currencyTo: 'EUR',
       },
     }));
 
   it('should use calculate buying power if an amount is given', () =>
-    expect(fetchBuyingPower(undefined, '2018-02-07', 'SEK', 'EUR', 5000)).to.eventually.deep.equal({
+    expect(fetchBuyingPower(undefined, '2018-05-02', 'SEK', 'EUR', 5000)).to.eventually.deep.equal({
       currentExchangeRate: {
         currencyFrom: 'SEK',
-        date: '2018-02-09',
-        exchangeRate: 9.9448,
+        date: '2018-05-04',
+        exchangeRate: 10.5715,
         currencyTo: 'EUR',
       },
       difference: {
-        currentBuyingPower: '49724.00',
-        latestDate: '2018-02-09',
-        originalBuyingPower: '49292.50',
-        rate: '0.0863',
-        ratePercentage: '0.88',
-        sinceDate: '2018-02-07',
+        currentBuyingPower: '52857.50',
+        latestDate: '2018-05-04',
+        originalBuyingPower: '53087.00',
+        rate: '-0.0459',
+        ratePercentage: '-0.43',
+        sinceDate: '2018-05-02',
       },
       historicalExchangeRate: {
         currencyFrom: 'SEK',
-        date: '2018-02-07',
-        exchangeRate: 9.8585,
+        date: '2018-05-02',
+        exchangeRate: 10.6174,
         currencyTo: 'EUR',
       },
     }));
 
-  afterEach(mock.restore);
+  afterEach(() => {
+    cache.reset();
+    permCache.reset();
+
+    clock.restore();
+  });
 });

@@ -1,4 +1,4 @@
-const { fetchRates, fetchRateForDate } = require('./db');
+const { fetchRates, fetchRateForDate } = require('./fetchHistoricalExchangeRates');
 
 const getExchangeRate = async (period, date, currencyFrom, currencyTo) => {
   let historicalExchangeRate;

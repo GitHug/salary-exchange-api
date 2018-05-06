@@ -3,14 +3,16 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const { graphqlExpress, graphiqlExpress } = require('apollo-server-express');
 const cors = require('cors');
-const scheduler = require('./utils/scheduler.js');
-const { fetchRates } = require('./db');
+const { fetchRates } = require('./fetchHistoricalExchangeRates');
 const { fetchBuyingPower } = require('./fetchBuyingPower');
 const { fetchLatestExchangeRate } = require('./fetchLatestExchangeRate');
-const schema = require('./schema');
+const { schema, Period } = require('./schema');
 
-// Schedule a job to download ECB data
-scheduler.scheduleJob();
+// Initialize caches
+const ttl = 12;
+const checkPeriod = 13;
+require('./cache').init(ttl, checkPeriod);
+require('./permCache').init();
 
 const app = express();
 // Add headers
@@ -23,7 +25,7 @@ app.get('/exchangeRates', ({
     period, currencyFrom, currencyTo, amount,
   },
 }, res) =>
-  fetchRates(period, currencyFrom, currencyTo, amount)
+  fetchRates(Period[period], currencyFrom, currencyTo, amount)
     .then(data => res.json(data)));
 
 app.get('/buyingPower', ({
