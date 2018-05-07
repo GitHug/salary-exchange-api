@@ -34,7 +34,7 @@ const calculateExchangeRate = (currencyFrom, currencyTo, base, rates) => {
   if (currencyFrom === base) {
     exchangeRate = rates[currencyTo];
   } else if (currencyTo === base) {
-    exchangeRate = 1 / rates[currencyTo];
+    exchangeRate = 1 / rates[currencyFrom];
   } else {
     const exchangeRateFrom = rates[currencyFrom];
     const exchangeRateTo = rates[currencyTo];
